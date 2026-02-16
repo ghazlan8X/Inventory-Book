@@ -1,0 +1,22 @@
+{{ template "header.html" . }}
+
+<section>
+    {{ if .payload }}
+        <form action="/updateBook/{{ .payload.ID }}" method="post">
+    {{ else }}
+        <form action="/book" method="post">
+    {{ end }}
+            <div>
+                <input class="input" type="text" placeholder="Enter Title"        name="Title"        value="{{ .payload.Title }}">
+                <input class="input" type="text" placeholder="Enter Author"       name="Author"       value="{{ .payload.Author }}">
+                <input class="input" type="text" placeholder="Enter Description"  name="Description"  value="{{ .payload.Description }}">
+                <input class="input" type="number" placeholder="Enter Stock"        name="Stock"        value="{{ .payload.Stock }}">
+                <input class="hidden" type="hidden" name="auth"        value="{{ .auth }}">
+
+                <button type="submit">Submit</button>
+            </div>
+
+        </form>
+</section>
+
+{{ template "footer.html" .}}

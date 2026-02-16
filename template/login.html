@@ -1,0 +1,28 @@
+{{ template "header.html" . }}
+
+<section class="section">
+    <form action="/login" method="post">
+        {{ if .content }}
+            <div class="">
+                {{ .content }}
+            </div>
+        {{ end }}
+
+        <div>
+            <label for="username">Username</label>
+            <input type="text" placeholder="Enter  Username" name="username" required>
+        </div>
+
+        <div>
+            <label for="password">Password</label>
+            <input type="password" placeholder="Enter  Password" name="password" required>
+        </div>
+
+        <div>
+            <button type="submit">Login</button>
+        </div>
+
+    </form>
+</section>
+
+{{ template "footer.html" . }}
