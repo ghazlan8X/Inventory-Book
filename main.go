@@ -1,10 +1,10 @@
 package main
 
 import (
-	apps "BelajarGolang4/app"
-	"BelajarGolang4/auth"
-	"BelajarGolang4/db"
-	"BelajarGolang4/middleware"
+	apps "BelajarGolang5/app"
+	"BelajarGolang5/auth"
+	"BelajarGolang5/db"
+	"BelajarGolang5/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,16 +15,21 @@ func main() {
 	conn := db.InitDB()
 
 	router := gin.Default()
-	router.LoadHTMLGlob("template/*")
+	// router.LoadHTMLGlob("resource/**/*")
+	router.LoadHTMLGlob("resource/**/*.html")
 
 	handler := apps.New(conn)
+	authH := auth.New(conn)
 
 	// Home
 	router.GET("/", auth.HomeHandler)
 
 	// Login
 	router.GET("/login", auth.LoginGetHandler)
-	router.POST("/login", auth.LoginPostHandler)
+	router.POST("/login", authH.LoginPostHandler)
+
+	// logout
+	router.GET("/logout", auth.Logout)
 
 	// get all books
 	router.GET("/books", middleware.AuthValid, handler.GetBooks)

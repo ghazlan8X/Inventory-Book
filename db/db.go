@@ -1,7 +1,7 @@
 package db
 
 import (
-	"BelajarGolang4/models"
+	"BelajarGolang5/models"
 	"log"
 	"os"
 
@@ -31,30 +31,52 @@ func InitDB() *gorm.DB {
 
 func migrate(db *gorm.DB) {
 	db.AutoMigrate(&models.Books{})
+	db.AutoMigrate(&models.User{})
 
-	data := models.Books{}
-	if db.Find(&data).RecordNotFound() {
+	BooksData := models.Books{}
+	UserData := models.User{}
+
+	if db.Find(&BooksData).RecordNotFound() {
+		seederBook(db)
+	}
+
+	if db.Find(&UserData).RecordNotFound() {
 		seederBook(db)
 	}
 }
 
 func seederBook(db *gorm.DB) {
-	data := []models.Books{
+	Booksdata := []models.Books{
 		{
-			Title:       "5",
+			Title:       "5cm Per Second",
 			Author:      "gk ada",
 			Description: "gk ada juga pd mls",
 			Stock:       10,
 		},
 		{
-			Title:       "payung",
+			Title:       "5",
 			Author:      "gk ada juga",
 			Description: "mls gk usah lh",
 			Stock:       10,
 		},
 	}
 
-	for _, v := range data {
+	UserData := []models.User{
+		{
+			Username: "admin",
+			Password: "admin123",
+		},
+		{
+			Username: "zhongli",
+			Password: "123",
+		},
+	}
+
+	for _, v := range Booksdata {
+		db.Create(&v)
+	}
+
+	for _, v := range UserData {
 		db.Create(&v)
 	}
 }

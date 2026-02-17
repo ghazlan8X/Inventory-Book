@@ -1,5 +1,5 @@
-{{ template "header.html" . }}
-
+{{ define "book.form" }}
+{{ template "header" . }}
 <section>
     {{ if .payload }}
         <form action="/updateBook/{{ .payload.ID }}" method="post">
@@ -18,5 +18,5 @@
 
         </form>
 </section>
-
-{{ template "footer.html" .}}
+{{ template "footer" .}}
+{{ end }}

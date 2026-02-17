@@ -1,8 +1,7 @@
 package app
 
 import (
-	"BelajarGolang4/models"
-	"fmt"
+	"BelajarGolang5/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,10 +20,9 @@ func (h *handler) GetBooks(c *gin.Context) {
 	var books []models.Books
 
 	h.DB.Find(&books)
-	c.HTML(http.StatusOK, "index.html", gin.H{
+	c.HTML(http.StatusOK, "book.index", gin.H{
 		"PageTitle": "Home Page",
 		"payload":   books,
-		"auth":      c.Query("auth"),
 	})
 }
 
@@ -36,7 +34,7 @@ func (h *handler) GetBookById(c *gin.Context) {
 		c.AbortWithStatus(http.StatusNotFound)
 	}
 
-	c.HTML(http.StatusOK, "book.html", gin.H{
+	c.HTML(http.StatusOK, "book.detail", gin.H{
 		"PageTitle": books.Title,
 		"payload":   books,
 		"auth":      c.Query("auth"),
@@ -44,7 +42,7 @@ func (h *handler) GetBookById(c *gin.Context) {
 }
 
 func (h *handler) AddBook(c *gin.Context) {
-	c.HTML(http.StatusOK, "formBook.html", gin.H{
+	c.HTML(http.StatusOK, "book.form", gin.H{
 		"PageTitle": "Add Book",
 		"auth":      c.Query("auth"),
 	})
@@ -56,7 +54,7 @@ func (h *handler) PostBook(c *gin.Context) {
 	c.ShouldBind(&book)
 	h.DB.Create(&book)
 
-	c.Redirect(http.StatusSeeOther, fmt.Sprintf("/books?auth=%s", c.PostForm("auth")))
+	c.Redirect(http.StatusSeeOther, "/books")
 }
 
 func (h *handler) UpdateBook(c *gin.Context) {
@@ -67,9 +65,10 @@ func (h *handler) UpdateBook(c *gin.Context) {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
 			"error": "Not Found",
 		})
+		return
 	}
 
-	c.HTML(http.StatusOK, "formBook.html", gin.H{
+	c.HTML(http.StatusOK, "book.form", gin.H{
 		"PageTitle": "Add Book",
 		"payload":   book,
 		"auth":      c.Query("auth"),
@@ -93,16 +92,14 @@ func (h *handler) PutBook(c *gin.Context) {
 
 	h.DB.Model(&book).Where("id=?", bookId).Update(&ReqBook)
 
-	c.Redirect(http.StatusMovedPermanently, fmt.Sprintf("/book/%s?auth=%s", bookId, c.PostForm("auth")))
+	c.Redirect(http.StatusSeeOther, "/books")
 }
 
 func (h *handler) DeleteBook(c *gin.Context) {
 	var book models.Books
 	bookId := c.Param("id")
 
-	// h.DB.Delete(&book, "id=?", bookId)
 	h.DB.Where("id=?", bookId).Delete(&book)
 
-	// c.Redirect(http.StatusSeeOther, fmt.Sprintf("/book/%s?auth=%s", bookId, c.PostForm("auth")))
-	c.Redirect(http.StatusSeeOther, fmt.Sprintf("/books/?auth=%s", c.PostForm("auth")))
+	c.Redirect(http.StatusSeeOther, "/books")
 }

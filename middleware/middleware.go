@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"BelajarGolang4/models"
+	"BelajarGolang5/models"
 	"fmt"
 	"net/http"
 
@@ -10,31 +10,26 @@ import (
 )
 
 func AuthValid(c *gin.Context) {
-	var tokenString string
+	tokenString, err := c.Cookie("token")
 
-	tokenString = c.Query("auth")
-	if tokenString == "" {
-		tokenString = c.PostForm("auth")
-		if tokenString == "" {
-			c.HTML(http.StatusUnauthorized, "login.html", gin.H{"content": "token nil"})
-			c.Abort()
-			return
-		}
+	// run if no Cookie
+	if err != nil {
+		c.HTML(http.StatusUnauthorized, "login.html", gin.H{"content": "token nil"})
+		c.Abort()
+		return
 	}
 
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-		if _, invalid := t.Method.(*jwt.SigningMethodHMAC); !invalid {
-			return nil, fmt.Errorf("invalid token", t.Header["alg"])
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("not valid")
 		}
 		return []byte(models.SECRET), nil
 	})
 
-	if token != nil && err == nil {
-		fmt.Println("token verified")
+	if err == nil && token.Valid {
 		c.Next()
 	} else {
 		c.HTML(http.StatusUnauthorized, "login.html", gin.H{"content": "token is expiry"})
 		c.Abort()
-		return
 	}
 }

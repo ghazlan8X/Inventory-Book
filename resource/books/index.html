@@ -1,0 +1,12 @@
+{{ define "book.index" }}
+{{ template "header" .}}
+
+{{ range .payload}}
+<a href="/book/{{ .ID }}">
+    <h2>{{ .Title }}</h2>
+</a>
+<p>Author : {{ .Author }}</p>
+{{ end }}
+
+{{ template "footer" .}}
+{{ end }}
